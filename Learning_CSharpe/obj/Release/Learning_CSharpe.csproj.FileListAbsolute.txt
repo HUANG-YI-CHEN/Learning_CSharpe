@@ -1,0 +1,10 @@
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\obj\Release\Learning_CSharpe.Main.resources
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\obj\Release\Learning_CSharpe.Properties.Resources.resources
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\obj\Release\Learning_CSharpe.csproj.GenerateResource.cache
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\obj\Release\Learning_CSharpe.csproj.CoreCompileInputs.cache
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\bin\Release\Learning_CSharpe.exe.config
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\bin\Release\Learning_CSharpe.exe
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\bin\Release\Learning_CSharpe.pdb
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\obj\Release\Learning_CSharpe.exe
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\obj\Release\Learning_CSharpe.pdb
+C:\Users\hsuan\source\repos\Learning_CSharpe\Learning_CSharpe\obj\Release\Learning_CSharpe.csproj.AssemblyReference.cache
