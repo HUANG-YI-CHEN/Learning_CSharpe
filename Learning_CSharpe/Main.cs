@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Learning_CSharpe
@@ -53,9 +49,18 @@ namespace Learning_CSharpe
         private void button2_Click(object sender, EventArgs e)
         {
             string source = @"C:\Users\hsuan\Desktop\TFET_Fig";
-            string dest = @"C:\Users\hsuan\Desktop\TFET_Fig_Bak";
+            string dest = @"C:\Users\hsuan\Desktop\CC";
             FileUtil fileUtil = new FileUtil();
-            fileUtil.DirectoryCopy(source,dest);
+            fileUtil.DirectoryMove(source, dest);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            ProcessesUtil processesUtil = new ProcessesUtil();
+            foreach(Process ps in processesUtil.GetProcessesList())
+            {
+                textBox1.AppendText(ps.ToString());
+            }
         }
     }
 }
