@@ -1,77 +1,91 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 
 namespace Learning_CSharpe
 {
     public class FileUtil
     {
-        
-        public void DirectoryDelete(string targetDirectory)
-        {
-            if (Directory.Exists(targetDirectory))
-            {
-                try
-                {
-                    Directory.Delete(targetDirectory);
-                }
-                catch(Exception ex)
-                {
-                    throw (ex);
-                }
-            }
-        }
-        public void DirectoryDeleteRecursive(string targetDirectory)
+        public static void Create(string _src)
         {
             try
             {
-                Directory.Delete(targetDirectory,true);
+                if (!Directory.Exists(_src))
+                    Directory.CreateDirectory(_src);
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                throw (ex);
+                Console.WriteLine(ex.ToString());
             }
         }
-        public void DirectoryMove(string sourcePath, string targetDirectory)
+        public static void Delete(string _src)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(targetDirectory);
-            if (dirInfo.Exists == false)
-                Directory.CreateDirectory(targetDirectory);
-
-            List<String> MyMusicFiles = Directory
-                               .GetFiles(sourcePath, "*.*", SearchOption.AllDirectories).ToList();
-
-            foreach (string file in MyMusicFiles)
+            try
             {
-                FileInfo mFile = new FileInfo(file);
-                // to remove name collisions
-                if (new FileInfo(dirInfo + "\\" + mFile.Name).Exists == false)
+                if (Directory.Exists(_src))
                 {
-                    mFile.MoveTo(dirInfo + "\\" + mFile.Name);
+                    foreach (string file in Directory.GetFiles(_src))
+                    {
+                        File.Delete(file);
+                    }
+                    foreach (string folder in Directory.GetDirectories(_src))
+                    {
+                        FileUtil.Delete(folder);
+                    }
+                }
+                else if (File.Exists(_src))
+                {
+                    File.Delete(_src);
                 }
             }
-        }
-
-        public void DirectoryCopy(string sourcePath, string targetDirectory)
-        {
-            if (!Directory.Exists(targetDirectory))
-                Directory.CreateDirectory(targetDirectory);
-            string[] files = Directory.GetFiles(sourcePath);
-            foreach (string file in files)
+            catch (IOException ex)
             {
-                string name = Path.GetFileName(file);
-                string dest = Path.Combine(targetDirectory, name);
-                File.Copy(file, dest);
+                Console.WriteLine(ex.ToString());
             }
-            string[] folders = Directory.GetDirectories(sourcePath);
-            foreach (string folder in folders)
+            finally
             {
-                string name = Path.GetFileName(folder);
-                string dest = Path.Combine(targetDirectory, name);
-                DirectoryCopy(folder, dest);
+                Directory.Delete(_src, true);
+            }
+        }
+        public static void Copy(string _src, string _dest)
+        {
+            try
+            {
+                if (Directory.Exists(_src))
+                {
+                    FileUtil.Create(_dest);
+                    foreach (string file in Directory.GetFiles(_src))
+                    {
+                        string fileName = (file.Replace(_src, "")).Substring(1);
+                        string destFullPath = Path.Combine(_dest, fileName);
+                        File.Copy(file, destFullPath, true);                        
+                    }
+                    foreach (string folder in Directory.GetDirectories(_src))
+                    {
+                        string folderName = (folder.Replace(_src, "")).Substring(1);
+                        string destFolderName = Path.Combine(_dest, folderName);
+                        FileUtil.Copy(folder, destFolderName);
+                    }
+                }
+                else if (File.Exists(_src))
+                {
+                    File.Copy(_src, _dest, true);                    
+                }
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        public static void Move(string _src, string _dest)
+        {
+            try
+            {
+                FileUtil.Copy(_src, _dest);
+                FileUtil.Delete(_src);
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
         }
     }

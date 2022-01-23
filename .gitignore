@@ -1,3 +1,3 @@
-Learning_CSharpe\bin*
-Learning_CSharpe\obj\*
+Learning_CSharpe/bin/
+Learning_CSharpe/obj/
 *.log

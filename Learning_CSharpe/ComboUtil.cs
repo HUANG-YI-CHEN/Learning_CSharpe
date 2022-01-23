@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Learning_CSharpe
 {
-	public class ComboBoxItem
+    public class ComboBoxItem
 		{
 			public ComboBoxItem(string value, string text)
 			{
@@ -42,7 +42,7 @@ namespace Learning_CSharpe
                 if (selectedObject != null)
                     cbo.SelectedIndex = cbo.FindStringExact(selectedObject.Text.ToString());
                 else
-                    cbo.SelectedIndex = -1;
+                    cbo.SelectedIndex = -1;           
             }
             catch(Exception ex)
             {
@@ -98,16 +98,20 @@ namespace Learning_CSharpe
                 MessageBox.Show(ex.ToString() + " [" + value.ToString() + "] is duplicated");
             }
         }
+        public static void AddItem(ComboBox cbo, ComboBoxItem item)
+        {
+            cbo.Items.Add(item);
+        }
 
-		/// <summary>
-		/// DataTable 綁定下拉項目
-		/// </summary>
-		/// <param name="cbo">物件</param>
-		/// <param name="dt">資料集</param>
-		/// <param name="valueColumn">值欄位</param>
-		/// <param name="textColumn">名稱欄位</param>
-		/// <param name="addEmpty">是否加空白選項</param>
-		public static void BindTableToDDL(ComboBox cbo, DataTable dt, string valueColumn, string textColumn, bool addEmpty)
+        /// <summary>
+        /// DataTable 綁定下拉項目
+        /// </summary>
+        /// <param name="cbo">物件</param>
+        /// <param name="dt">資料集</param>
+        /// <param name="valueColumn">值欄位</param>
+        /// <param name="textColumn">名稱欄位</param>
+        /// <param name="addEmpty">是否加空白選項</param>
+        public static void BindTableToDDL(ComboBox cbo, DataTable dt, string valueColumn, string textColumn, bool addEmpty)
 		{
 			cbo.Items.Clear();
 			if (addEmpty)

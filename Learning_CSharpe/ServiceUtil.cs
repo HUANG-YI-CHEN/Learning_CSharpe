@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.ServiceProcess;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.ServiceProcess;
 
 namespace Learning_CSharpe
 {
     class ServiceUtil
     {
-        private ServiceController tController;
-        public void ServiceSwitch(string MachineName, string ServiceName)
+        public static void ServiceSwitch(string MachineName, string ServiceName)
         {
-            tController = new ServiceController();
+            ServiceController tController = new ServiceController();
             //指到本機
             tController.MachineName = MachineName;
             //服務的名稱
@@ -26,6 +19,7 @@ namespace Learning_CSharpe
             {
                 tController.Stop();
             }
+            tController.Dispose();
         }
     }
 }
