@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Data;
-using System.DirectoryServices.AccountManagement;
-using System.Security.Principal;
-using System.Threading;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Security.Principal;
 
 namespace Learning_CSharpe
 {
@@ -242,30 +246,80 @@ namespace Learning_CSharpe
                 pf.SetM(comboBox25, comboBox22, comboBox23, comboBox24);
                 pf.SetEL(textBox21, textBox26, comboBox22, comboBox23, comboBox24, comboBox25);
             }
-            textBox11.Text = System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString();
-            textBox12.Text = Environment.MachineName.ToString();
-            textBox13.Text = System.Windows.Forms.SystemInformation.ComputerName;
-            textBox14.Text = System.Net.Dns.GetHostName();
-            textBox14.AppendText("\r\n["+System.Environment.GetEnvironmentVariable("COMPUTERNAME")+"]\r\n");
-            textBox14.AppendText("\r\n[" + Environment.UserDomainName + "123131]\r\n");
-            textBox14.AppendText("\r\n[" + System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName + "]\r\n");
-            MessageBox.Show("1: " + WindowsIdentity.GetCurrent().Name.ToString() + "\r\n" +
-               "2: " + Environment.UserDomainName + "\r\n" +
-               "3: " + WindowsIdentity.GetCurrent().Name + "\r\n" +
-                "4: " + Thread.CurrentPrincipal.Identity.Name + "\r\n" +
-               "5: " + Environment.UserName + "\r\n"+
-               "6: "+ UserPrincipal.Current.DisplayName);
+            // DomainName: IPGlobalProperties.GetIPGlobalProperties().DomainName
+            // HostName: Environment.MachineName.ToString(); SystemInformation.ComputerName; Dns.GetHostName(); Environment.GetEnvironmentVariable("COMPUTERNAME"); Environment.UserDomainName;
+            // HostName\User: WindowsIdentity.GetCurrent().Name.ToString();
+            textBox11.Text = WindowsIdentity.GetCurrent().Name.ToString();
+            textBox12.Text = Environment.UserDomainName;
+            textBox13.Text = SystemInformation.ComputerName;
+            textBox14.Text = System.Environment.UserDomainName;
+            textBox14.AppendText("\r\n["+Environment.GetEnvironmentVariable("COMPUTERNAME")+"]\r\n");
+            //MessageBox.Show("1: " + WindowsIdentity.GetCurrent().Name.ToString() + "\r\n" +
+            //   "2: " + Environment.UserDomainName + "\r\n" +
+            //   "3: " + WindowsIdentity.GetCurrent().Name + "\r\n" +
+            //    "4: " + Thread.CurrentPrincipal.Identity.Name + "\r\n" +
+            //   "5: " + Environment.UserName + "\r\n"+
+            //   "6: "+ UserPrincipal.Current.DisplayName);
 
 
 
         }
         private void button11_Click(object sender, EventArgs e)
         {
+            textBox14.AppendText("\r\n"+Directory.GetCurrentDirectory());
+            string hostNamePath = "changeHostName.bat";
+            if (File.Exists(hostNamePath))
+                File.Delete(hostNamePath);
 
+            string _text = "@echo off" + "\r\n" +
+                "title GET ADMIN" + "\r\n" +
+                "setlocal" + "\r\n" +
+                "set uac=~uac_permission_tmp_%random%" + "\r\n" +
+                "md \"%SystemRoot%\\system32\\%uac%\" 2>nul" + "\r\n" +
+                "if %errorlevel%==0 ( rd \"%SystemRoot%\\system32\\%uac%\" >nul 2>nul ) else (" + "\r\n" +
+                "   echo set uac = CreateObject^(\"Shell.Application\"^) > \"%temp%\\%uac%.vbs\"" + "\r\n" +
+                "   echo uac.ShellExecute \"%~s0\",\"\",\"\",\"runas\",1 >> \"%temp%\\%uac%.vbs\"" + "\r\n" +
+                "   echo WScript.Quit >> \"%temp%\\%uac%.vbs\"" + "\r\n" +
+                "   \"%temp%\\%uac%.vbs\" /f" + "\r\n" +
+                "   del /f /q \"%temp%\\%uac%.vbs\" & exit" + "\r\n" +
+                ")" + "\r\n" +
+                "endlocal" + "\r\n";
+            DocumentUtil.WriteFile(hostNamePath, _text, Encoding.ASCII);
+
+            string afterHostName = "MOMO-FDDD6";
+            string cmdChange = String.Format("wmic computersystem where name=\"%COMPUTERNAME%\" rename \"{0}\"\r\n", afterHostName);
+            DocumentUtil.WriteFile(hostNamePath, cmdChange+"pause\r\n", Encoding.ASCII);
+
+            //http://slashview.com/archive2016/20160517.html
+            Process oProcess = new Process()
+            {
+                StartInfo = new System.Diagnostics.ProcessStartInfo()
+                {
+                    FileName = hostNamePath,
+                    Arguments = "",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true
+                },
+                EnableRaisingEvents = true,
+            };            
+            oProcess.Exited += (s, ex) => {
+                Process oTemp = (Process) s;
+                oTemp.Close();      
+            };
+            oProcess.Start();
         }
         private void button21_Click(object sender, EventArgs e)
         {
-
+            
+        }
+        private void textBox00_Enter(object sender, System.EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(textBox00.Text))
+            {
+                textBox00.SelectionStart = 0;
+                textBox00.SelectionLength = textBox00.Text.Length;
+            }
         }
     }
 }
