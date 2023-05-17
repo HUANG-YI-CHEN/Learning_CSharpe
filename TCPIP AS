@@ -1,0 +1,80 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net;
+using System.Net.Sockets;
+
+namespace tcpserver
+{
+    class Program
+    {
+
+        static void Main(string[] args)
+        {
+            
+            Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 8622);
+            server.Bind(endpoint);
+
+            server.Listen(15);
+            server.BeginAccept(new AsyncCallback(Accpcallback), server);
+            Console.ReadLine();
+        }
+
+        private static void Accpcallback(IAsyncResult ar)
+        {
+            Socket server = (Socket)ar.AsyncState;
+            Socket client = server.EndAccept(ar);
+            string remoteendpoint = client.RemoteEndPoint.ToString();
+            Console.WriteLine("已接受客户端【0】的连接。" + remoteendpoint);
+            byte[] data = Encoding.UTF8.GetBytes("您好，服务器已经接受连接了。");
+            int len = data.Length;
+            client.Send(BitConverter.GetBytes(len));
+            client.Send(data);
+            client.Close();
+            Console.ReadLine();
+            server.BeginAccept(new AsyncCallback(Accpcallback), server);
+        }
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net;
+using System.Net.Sockets;
+
+namespace tcpclient
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            try
+            {
+                client.Connect("127.0.0.1", 8622);
+                string remoteendpoint = client.RemoteEndPoint.ToString();
+                Console.WriteLine("成功连接服务器【0】。" + remoteendpoint);
+
+                byte[] buffer = new byte[4];
+                client.Receive(buffer);
+                int len = BitConverter.ToInt32(buffer, 0);
+
+                buffer = new byte[len];
+                client.Receive(buffer);
+                string msg = Encoding.UTF8.GetString(buffer);
+                Console.WriteLine("从服务器接收到消息：" + msg);
+                Console.ReadLine();
+            }
+            catch (SocketException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    }
+}
+//https://blog.csdn.net/egegerhn/article/details/124503415?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-124503415-blog-109705720.235^v36^pc_relevant_default_base3&spm=1001.2101.3001.4242.1&utm_relevant_index=1
